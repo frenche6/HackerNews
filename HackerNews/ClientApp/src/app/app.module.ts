@@ -6,8 +6,6 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { NewsComponent } from "./news/news.component";
 import { NullTransformPipe } from './Pipes/null-Transform.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -16,8 +14,6 @@ import { NgxPaginationModule } from 'ngx-pagination';
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
-    FetchDataComponent,
     NewsComponent,
     NullTransformPipe
   ],
@@ -26,8 +22,6 @@ import { NgxPaginationModule } from 'ngx-pagination';
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'fetch-data', component: FetchDataComponent },
       { path: 'news', component: NewsComponent}
     ]),
     NgxPaginationModule
