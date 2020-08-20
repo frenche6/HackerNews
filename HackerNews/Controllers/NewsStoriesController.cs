@@ -18,7 +18,7 @@ namespace HackerNews.Controllers
         }
 
         [HttpGet]
-        [Route("GetTopStories")]
+        [Route("GetNewStories")]
         public async Task<List<StoryItem>> GetTopStories()
         {
             var stories = await _newsStoriesService.GetTopNewStories();
