@@ -33,9 +33,7 @@ namespace HackerNews
             services.AddHttpClient();
             services.AddScoped<INewsStoriesService, NewsStoriesService>();
             services.AddSingleton<ICacheService, CacheService>();
-
-
-
+            services.AddScoped<IHttpService, HttpService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

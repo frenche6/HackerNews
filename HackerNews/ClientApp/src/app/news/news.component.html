@@ -1,5 +1,5 @@
 <p *ngIf="!stories"><em>Loading...</em></p>
-<div>
+<div *ngIf="stories">
     Search box
     <input [(ngModel)]="searchText" (keyup)="onKey($event)">
     <button >Search</button>
@@ -23,4 +23,4 @@
   </tbody>
 </table>
 
-<pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+<pagination-controls *ngIf="stories" (pageChange)="pageChanged($event)"></pagination-controls>

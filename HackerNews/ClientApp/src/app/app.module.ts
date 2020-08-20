@@ -22,6 +22,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
+      {path: '', redirectTo: '/news', pathMatch: 'full'},
       { path: 'news', component: NewsComponent}
     ]),
     NgxPaginationModule
