@@ -19,7 +19,6 @@ export class NewsComponent implements OnInit {
     http.get<StoryItem[]>(baseUrl + 'NewsStories/GetNewStories').subscribe(result => {
       this.stories = result;
       this.filteredStories = result;
-      console.log(result);
       this.setPaginationConfig(this.itemsPerPage, 1, this.stories.length);
     }, error => console.error(error));
     
