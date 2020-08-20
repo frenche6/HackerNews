@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { NewsComponent } from "./news/news.component";
 import { NullTransformPipe } from './Pipes/null-Transform.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { NullTransformPipe } from './Pipes/null-Transform.pipe';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'news', component: NewsComponent}
-    ])
+    ]),
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]
