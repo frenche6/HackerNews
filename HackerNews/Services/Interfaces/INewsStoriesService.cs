@@ -6,7 +6,7 @@ namespace HackerNews.Services.Interfaces
 {
     public interface INewsStoriesService
     {
-        Task<List<StoryItem>> GetTopNewStories();
+        Task<List<StoryItem>> GetNewStories();
         Task<Stories> GetStoryIds(LiveDataType dataType);
         Task<StoryItem> GetStoryItemFromId(int id);
         Task<List<StoryItem>> GetAllStoriesFromIdsAsync(Stories stories);

@@ -5,7 +5,7 @@ namespace HackerNews.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class HealthController : Controller
+    public class HealthController : ControllerBase
     {
         // GET
         [HttpGet]

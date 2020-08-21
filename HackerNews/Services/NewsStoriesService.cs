@@ -21,7 +21,7 @@ namespace HackerNews.Services
             _httpService = httpService;
         }
 
-        public async Task<List<StoryItem>> GetTopNewStories()
+        public async Task<List<StoryItem>> GetNewStories()
         {
             var topStoryIds = await GetStoryIds(LiveDataType.newstories);
             var topStories = await GetAllStoriesFromIdsAsync(topStoryIds);
