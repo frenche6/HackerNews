@@ -13,18 +13,26 @@ export class NewsComponent implements OnInit {
   paginationConfig: any;
   searchText: string;
 
+  httpClient: HttpClient;
+  baseUrl: string;
+
   itemsPerPage: number = 10;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<StoryItem[]>(baseUrl + 'NewsStories/GetNewStories').subscribe(result => {
+    this.httpClient = http;
+    this.baseUrl = baseUrl;    
+  }
+
+  ngOnInit() {
+    this.getNewsStories();
+  }
+
+  getNewsStories(){
+    this.httpClient.get<StoryItem[]>(this.baseUrl + 'NewsStories/GetNewStories').subscribe(result => {
       this.stories = result;
       this.filteredStories = result;
       this.setPaginationConfig(this.itemsPerPage, 1, this.stories.length);
     }, error => console.error(error));
-    
-  }
-
-  ngOnInit() {
   }
 
   pageChanged(event){
