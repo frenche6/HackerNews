@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { NewsComponent } from "./news/news.component";
+import {HomeMenuComponent} from "./home-menu/home-menu.component";
 import {NullTransformPipe} from './pipes/null-transform.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -15,6 +16,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     AppComponent,
     NavMenuComponent,
     NewsComponent,
+    HomeMenuComponent,
     NullTransformPipe
   ],
   imports: [
@@ -22,7 +24,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      {path: '', redirectTo: '/news', pathMatch: 'full'},
+      {path: '', redirectTo: '/home', pathMatch: 'full'},
+      {path: 'home', component: HomeMenuComponent},
       { path: 'news', component: NewsComponent}
     ]),
     NgxPaginationModule
