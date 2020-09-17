@@ -1,9 +1,10 @@
 <p *ngIf="!stories"><em>Loading...</em></p>
-<div *ngIf="stories">
+<!--Disabled since server side pagination was enabled-->
+<!-- <div *ngIf="stories">
     Search box
     <input [(ngModel)]="searchText" (keyup)="onKey($event)">
     <button >Search</button>
-</div>
+</div> -->
 
 <table class="table table-striped" aria-labelledby="tableLabel" *ngIf="stories">
   <thead>

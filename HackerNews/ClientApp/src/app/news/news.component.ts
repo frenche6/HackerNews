@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject, AfterViewInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { StoryItem } from "../Interfaces/story-item";
 
@@ -7,7 +7,8 @@ import { StoryItem } from "../Interfaces/story-item";
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.css']
 })
-export class NewsComponent implements OnInit {
+export class NewsComponent implements AfterViewInit {
+  totalStoryCount: number;
   stories: StoryItem[];
   filteredStories: StoryItem[];
   paginationConfig: any;
@@ -16,27 +17,49 @@ export class NewsComponent implements OnInit {
   httpClient: HttpClient;
   baseUrl: string;
 
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 12;
+  isPageLoading: boolean = false;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.httpClient = http;
     this.baseUrl = baseUrl;    
   }
 
-  ngOnInit() {
-    this.getNewsStories();
+  ngAfterViewInit() {
+       this.getNewsStories();
   }
 
   getNewsStories(){
-    this.httpClient.get<StoryItem[]>(this.baseUrl + 'NewsStories/GetNewStories').subscribe(result => {
+    this.isPageLoading = true;
+    this.httpClient.get<number>(this.baseUrl + 'NewsStories/GetNewStoriesCount').subscribe(result => {
+      this.totalStoryCount = result;
+      this.setPaginationConfig(this.itemsPerPage, 0, result);
+      this.getNewsStoriesPaginated();
+      this.isPageLoading = false;
+    }, error => {
+      this.isPageLoading = false;
+      console.error(error);
+    });
+  }
+
+  getNewsStoriesPaginated(){
+    this.isPageLoading = true;
+    this.httpClient.get<StoryItem[]>(this.baseUrl + 'NewsStories/GetNewStories/' + this.paginationConfig.currentPage + '/' + this.paginationConfig.itemsPerPage).subscribe(result => {
       this.stories = result;
       this.filteredStories = result;
-      this.setPaginationConfig(this.itemsPerPage, 1, this.stories.length);
-    }, error => console.error(error));
+      this.isPageLoading = false;
+    }, error => {
+      this.isPageLoading = false;
+      console.error(error);      
+    });
   }
 
   pageChanged(event){
+    if (this.isPageLoading)
+      return;
+
     this.paginationConfig.currentPage = event;
+    this.getNewsStoriesPaginated();
   }
 
   setPaginationConfig(itemsPerPage: number, currentPage: number, totalItems: number){

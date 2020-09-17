@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HackerNews.Models;
@@ -21,11 +22,32 @@ namespace HackerNews.Services
             _httpService = httpService;
         }
 
-        public async Task<List<StoryItem>> GetNewStories()
+        public async Task<int> GetNewStoriesCount()
         {
-            var topStoryIds = await GetStoryIds(LiveDataType.newstories);
-            var topStories = await GetAllStoriesFromIdsAsync(topStoryIds);
-            return topStories;
+            Stories newStoryIds = _cacheService.GetStoryIds();
+
+            if (newStoryIds == null)
+            {
+                newStoryIds = await GetStoryIds(LiveDataType.newstories);
+                _cacheService.SetStoryIds(newStoryIds);
+            }
+
+            return newStoryIds.StoryIds.Count;
+        }
+
+        public async Task<List<StoryItem>> GetNewStories(int page, int numberOfRecords)
+        {
+            Stories newStoryIds = _cacheService.GetStoryIds();
+
+            if (newStoryIds == null)
+            {
+                newStoryIds = await GetStoryIds(LiveDataType.newstories);
+                _cacheService.SetStoryIds(newStoryIds);
+            }
+
+            var pagedStoryIds = GetPagedStoryIds(newStoryIds, page, numberOfRecords);
+            var results = await GetAllStoriesFromIdsAsync(pagedStoryIds);
+            return results;
 
         }
 
@@ -53,35 +75,46 @@ namespace HackerNews.Services
             return story;
         }
 
+        private List<int> GetPagedStoryIds(Stories storyIds, int page, int numberOfRecords)
+        {
+            if (page == 1)
+                return storyIds.StoryIds.Take(numberOfRecords).ToList();
+
+            return storyIds.StoryIds.Skip(page * numberOfRecords).Take(numberOfRecords).ToList();
+        }
+
         /// <summary>
         /// For each story id, go get story.
         /// Caches list of story fetched.
         /// </summary>
         /// <param name="stories"></param>
         /// <returns></returns>
-        public async Task<List<StoryItem>> GetAllStoriesFromIdsAsync(Stories stories)
+        public async Task<List<StoryItem>> GetAllStoriesFromIdsAsync(List<int> storyIds)
         {
-            if (_cacheService.GetNewStories() != null)
-            {
-                return _cacheService.GetNewStories();
-            }
-
-            var storyItems = new List<StoryItem>();
+            var results = new List<StoryItem>();
+            var cachedStories = _cacheService.GetNewStories();
             var tasks = new List<Task<StoryItem>>();
 
-            foreach (var storiesStoryId in stories.StoryIds)
+            foreach(var storyId in storyIds)
             {
-                tasks.Add(GetStoryItemFromId(storiesStoryId));
+                if (cachedStories != null && cachedStories.Exists(x => x.Id == storyId))
+                    results.Add(cachedStories.Single(x => x.Id == storyId));
+                else
+                    tasks.Add(GetStoryItemFromId(storyId));
             }
+
+            var fetchedStoryItems = new List<StoryItem>();
 
             foreach (var task in tasks)
             {
                 var storyItem = await task;
-                storyItems.Add(storyItem);
+                fetchedStoryItems.Add(storyItem);
             }
 
-            _cacheService.SetNewStories(storyItems);
-            return storyItems;
+            _cacheService.SetNewStories(fetchedStoryItems);
+
+            results.AddRange(fetchedStoryItems);
+            return results;
         }
 
         
