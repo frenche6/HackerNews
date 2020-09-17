@@ -70,7 +70,7 @@ export class NewsComponent implements AfterViewInit {
     };
   }
 
-  onKey(event: any){
+  searchBoxKeyUp(event: any){
     this.filteredStories = this.stories.filter(story => story != null && story.title != null && story.title.includes(event.target.value));
     this.setPaginationConfig(this.itemsPerPage, 1, this.filteredStories.length);
   }
