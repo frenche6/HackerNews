@@ -83,6 +83,19 @@ namespace HackerNews.Services
             return storyIds.StoryIds.Skip(page * numberOfRecords).Take(numberOfRecords).ToList();
         }
 
+        public async Task<List<StoryItem>> GetNumberOfStories(int numberOfStories)
+        {
+            Stories newStoryIds = _cacheService.GetStoryIds();
+
+            if (newStoryIds == null)
+            {
+                newStoryIds = await GetStoryIds(LiveDataType.newstories);
+                _cacheService.SetStoryIds(newStoryIds);
+            }
+
+            return await GetAllStoriesFromIdsAsync(newStoryIds.StoryIds.Take(numberOfStories).ToList());
+        }
+
         /// <summary>
         /// For each story id, go get story.
         /// Caches list of story fetched.

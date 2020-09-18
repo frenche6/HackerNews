@@ -1,14 +1,14 @@
 import { Component, Inject, AfterViewInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { StoryItem } from "../Interfaces/story-item";
+import { StoryItem } from "../../Interfaces/story-item"
 
 @Component({
-  selector: 'app-news',
-  templateUrl: './news.component.html',
-  styleUrls: ['./news.component.css']
+  selector: 'app-news-search',
+  templateUrl: './news-search.component.html',
+  styleUrls: ['./news-search.component.css']
 })
-export class NewsComponent implements AfterViewInit {
-  totalStoryCount: number;
+export class NewsSearchComponent implements AfterViewInit {
+
   stories: StoryItem[];
   filteredStories: StoryItem[];
   paginationConfig: any;
@@ -19,6 +19,7 @@ export class NewsComponent implements AfterViewInit {
 
   itemsPerPage: number = 10;
   isPageLoading: boolean = false;
+  totalNumberOfRecordsToGet: number = 150;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.httpClient = http;
@@ -31,35 +32,23 @@ export class NewsComponent implements AfterViewInit {
 
   getNewsStories(){
     this.isPageLoading = true;
-    this.httpClient.get<number>(this.baseUrl + 'NewsStories/GetNewStoriesCount').subscribe(result => {
-      this.totalStoryCount = result;
-      this.setPaginationConfig(this.itemsPerPage, 0, result);
-      this.getNewsStoriesPaginated();
+    this.httpClient.get<StoryItem[]>(this.baseUrl + 'NewsStories/GetNewStories/' + this.totalNumberOfRecordsToGet).subscribe(result => {
+      this.stories = result;
+      this.filteredStories = result;
+      this.setPaginationConfig(this.itemsPerPage, 0, result.length);      
       this.isPageLoading = false;
     }, error => {
       this.isPageLoading = false;
       console.error(error);
     });
   }
-
-  getNewsStoriesPaginated(){
-    this.isPageLoading = true;
-    this.httpClient.get<StoryItem[]>(this.baseUrl + 'NewsStories/GetNewStories/' + this.paginationConfig.currentPage + '/' + this.paginationConfig.itemsPerPage).subscribe(result => {
-      this.stories = result;
-      this.filteredStories = result;
-      this.isPageLoading = false;
-    }, error => {
-      this.isPageLoading = false;
-      console.error(error);      
-    });
-  }
+ 
 
   pageChanged(event){
     if (this.isPageLoading)
       return;
 
     this.paginationConfig.currentPage = event;
-    this.getNewsStoriesPaginated();
   }
 
   setPaginationConfig(itemsPerPage: number, currentPage: number, totalItems: number){
@@ -71,7 +60,8 @@ export class NewsComponent implements AfterViewInit {
   }
 
   searchBoxKeyUp(event: any){
-    this.filteredStories = this.stories.filter(story => story != null && story.title != null && story.title.includes(event.target.value));
+
+    this.filteredStories = this.stories.filter(story => story != null && story.title != null && story.title.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()));
     this.setPaginationConfig(this.itemsPerPage, 1, this.filteredStories.length);
   }
 

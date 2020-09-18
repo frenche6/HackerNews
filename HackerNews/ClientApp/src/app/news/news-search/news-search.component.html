@@ -1,0 +1,26 @@
+<p *ngIf="!stories"><em>Loading...</em></p>
+<div *ngIf="stories">
+    Search box
+    <input [(ngModel)]="searchText" (keyup)="searchBoxKeyUp($event)">
+    <button >Search</button>
+</div>
+
+<table class="table table-striped" aria-labelledby="tableLabel" *ngIf="stories">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let story of filteredStories | paginate: paginationConfig">
+        <td *ngIf="story != null">{{ story.title | nullTransform : 'No Title' }}</td>
+        <td *ngIf="story != null">
+            <a *ngIf="story.url != null" href="{{story.url}}">Find News Story Here</a>
+            <p *ngIf="story.url == null">No url found</p>
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+<pagination-controls *ngIf="stories" (pageChange)="pageChanged($event)"></pagination-controls>

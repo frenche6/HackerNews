@@ -11,5 +11,6 @@ namespace HackerNews.Services.Interfaces
         Task<Stories> GetStoryIds(LiveDataType dataType);
         Task<StoryItem> GetStoryItemFromId(int id);
         Task<List<StoryItem>> GetAllStoriesFromIdsAsync(List<int> stories);
+        Task<List<StoryItem>> GetNumberOfStories(int numberOfStories);
     }
 }
